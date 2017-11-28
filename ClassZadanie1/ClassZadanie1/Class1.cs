@@ -27,5 +27,7 @@ namespace ClassZadanie1
         {
             return x / y;
         }
+
+       
     }
 }
