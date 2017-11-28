@@ -9,8 +9,13 @@ namespace ClassZadanie1
 {
     public class MatematykaTest
     {
-        [Fact]
-        public void add_returns_sum_of_given_values()
+        [Theory]
+        [InlineData(10,20,30)]
+        [InlineData(1, 2, 3)]
+        [InlineData(-10, 20, 10)]
+        [InlineData(-10, 30, 20)]
+
+        public void TheoryExample(double x, double y, double expected)
         {
             //arrange
 
@@ -20,11 +25,11 @@ namespace ClassZadanie1
 
             //act
 
-            var result = math.Add(10, 20);
+            var result = math.Add(x, y);
 
 
             //assert
-            Assert.Equal(30, result);     //wołamy klase asser z metodą Equal
+            Assert.Equal(expected, result);     //wołamy klase asser z metodą Equal
         }
 
         [Fact]
@@ -81,7 +86,7 @@ namespace ClassZadanie1
             Assert.Equal(10, result);     //wołamy klase asser z metodą Equal
 
          //   var result1 = math.Division(20.0);
-
+         
 
         }
                [Fact]
