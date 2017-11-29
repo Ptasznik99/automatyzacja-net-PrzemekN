@@ -15,28 +15,28 @@ namespace MySelenium
     public class Example : IDisposable
 
     {
-
-        private IWebDriver driver;
-
+        private const string SearchTextBox = "lst-ib";
+        private const string Google = "https://www.google.com";
+        private const string TextToSearch = "Code Sprinters";
+        private const string PageTitle = "Code Sprinters -";
+        private const string LinkTextToFind = "Poznaj nasze podejście";
+        private const string AkceptCookies = "Akceptuję";
+        
         private StringBuilder verificationErrors;
+        private IWebDriver driver;
 
         private string baseURL;
 
-       // private bool AcceptNextAlert = true;
+        public string BaseURL { get => baseURL; set => baseURL = value; }
 
-
+        // private bool AcceptNextAlert = true;
 
         public Example()
 
         {
-
             driver = new ChromeDriver();
-            driver.Manage().Window.Maximize();
-           
-            baseURL = "https://www.google.pl/";
-
+            BaseURL = "https://www.google.pl/";
             verificationErrors = new StringBuilder();
-
         }
 
         [Fact]
@@ -44,61 +44,82 @@ namespace MySelenium
         public void TheExampleTest()
 
         {
-            driver.Navigate().GoToUrl(baseURL);
+            GoToGoogle();
+            Search(TextToSearch);
+            //driver.findelement(by.id(searchtextbox)).clear();
+            //driver.findelement(by.id(searchtextbox)).sendkeys("codesprinters");
+            //driver.findelement(by.id(searchtextbox)).submit();
+            ClickSearchResultByPageTitle(PageTitle);
+            ClickSearchResultCookies(AkceptCookies);
 
-            driver.FindElement(By.Id("lst-ib")).Clear();
+            //var element = driver.FindElement(By.LinkText("Poznaj nasze podejście"));
+            //Assert.NotNull(element);
 
-            driver.FindElement(By.Id("lst-ib")).SendKeys("codesprinters");
-            driver.FindElement(By.Id("lst-ib")).Submit();
+            // var elements = GetElements(LinkTextToFind);
+            Assert.Single(GetElements(LinkTextToFind));
+            
+            //Thread.Sleep(2000);
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(11));
+            wait.Until(ExpectedConditions.InvisibilityOfElementWithText(By.LinkText("Akceptuję"), "Akceptuję"));
 
-            driver.FindElement(By.LinkText("Code Sprinters -")).Click();
-
-            var element = driver.FindElement(By.LinkText("Poznaj nasze podejście"));
-
-            Assert.NotNull(element);
-
-            var elements = driver.FindElements(By.LinkText("Poznaj nasze podejście"));
-
-            Assert.Single(elements);
-
-            driver.FindElement(By.LinkText("Akceptuję")).Click();
-
-            Thread.Sleep(2000);
-            waitForElementPresent(By.LinkText("Poznaj nasze podejście"), 5);
+            waitForElementPresent(By.LinkText("Poznaj nasze podejście"), 11);
 
             driver.FindElement(By.LinkText("Poznaj nasze podejście")).Click();
 
 
             //ver 1
-
             Assert.Contains("WIEDZA NA PIERWSZYM MIEJSCU", driver.PageSource);
 
             //ver 2
-
             Assert.Single(driver.FindElements(By.TagName("h2"))
                 .Where(tag => tag.Text == "WIEDZA NA PIERWSZYM MIEJSCU"));
 
         }
-            protected void waitForElementPresent(By by, int seconds)
 
+        private void  ClickSearchResultCookies (String Cookies )
+        {
+            driver.FindElement(By.LinkText(Cookies)).Click();
+        }
+
+        private IReadOnlyCollection<IWebElement> GetElements(String LinkTextToFind)
+        {
+            return driver.FindElements(By.LinkText("Poznaj nasze podejście"));
+        }
+
+        private void Search(string query)
+        {
+            var searchBbox = GetSearchBbox();
+            searchBbox.Clear();
+            searchBbox.SendKeys(query);
+            searchBbox.Submit();
+        }
+
+        private void ClickSearchResultByPageTitle(string title)
+        {
+            driver.FindElement(By.LinkText(title)).Click();
+        }
+
+        private void GoToGoogle()
+        {
+            driver.Navigate().GoToUrl(BaseURL);
+        }
+
+        private IWebElement GetSearchBbox()
+        {
+            return driver.FindElement(By.Id(SearchTextBox));
+        }
+
+        protected void waitForElementPresent(By by, int seconds)
             {
-
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(seconds));
-
                 wait.Until(ExpectedConditions.ElementToBeClickable(by));
-
             }
-
-
 
             protected void waitForElementPresent(IWebElement by, int seconds)
 
             {
-
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(seconds));
-
                 wait.Until(ExpectedConditions.ElementToBeClickable(by));
-
             }
         
 
