@@ -18,5 +18,7 @@ namespace PageObjectTests
             var element = Browser.FindByXpath("//article/header");
             element.First().Click();
         }
+
+      //  private static string URL1 = "https://autotestdotnet.wordpress.com/";
     }
 }
